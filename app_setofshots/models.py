@@ -2,7 +2,7 @@ from django.db.models import (
     Model,
     CharField, IntegerField, DateTimeField,
     ForeignKey, ManyToManyField, OneToOneField,
-    ImageField, SlugField, ManyToOneRel,
+    ImageField, SlugField, BooleanField,
     CASCADE,
 )
 from django.contrib.auth import get_user_model
@@ -48,8 +48,8 @@ class Event(Model):
         to='Bar', related_name='ivents', on_delete=CASCADE,
         verbose_name='Место'
     )
-    status = CharField(
-        max_length=15, choices=CHOICES_STATUS, verbose_name='Название'
+    is_published = BooleanField(
+        verbose_name='Опубликовано', blank=True, default=False
     )
 
     class Meta:
@@ -57,7 +57,7 @@ class Event(Model):
         verbose_name_plural = 'Ивент'
 
     def __str__(self):
-        return f'{self.title}, {self.start}, {self.status}.'
+        return f'{self.title}, {self.start}.'
 
 
 class Dish(Model):
