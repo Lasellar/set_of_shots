@@ -75,6 +75,10 @@ class Dish(Model):
     description = CharField(max_length=1024, verbose_name='Описание')
     tags = ManyToManyField(Tag, through='TagDish', verbose_name='Теги')
     price = IntegerField(verbose_name='Цена')
+    bar = ForeignKey(
+        'Bar', on_delete=CASCADE, null=False, related_name='dishes',
+        default=None
+    )
 
     class Meta:
         verbose_name = 'позиция меню'
@@ -98,11 +102,6 @@ class Bar(Model):
     description = CharField(max_length=1024, verbose_name='Описание')
     address = CharField(max_length=128, verbose_name='Адрес')
     opening_year = IntegerField(verbose_name='Год открытия')
-    dishes = ManyToManyField(
-        to=Dish, through='BarDish',
-        verbose_name='Позиции меню',
-        blank=False
-    )
 
     class Meta:
         verbose_name = 'бар'
