@@ -1,21 +1,21 @@
 from rest_framework.serializers import (
-    ModelSerializer, SerializerMethodField, CharField,
-    ListField, DictField
+    ModelSerializer, CharField,
 )
-import datetime as dt
-from pytz import utc
 
+from .mixins import EventSerializerMixin, BarSerializerMixin, CategorySerializerMixin
 from .models import (
     Bar, Event, Dish, Category, Tag
 )
 
 
-class CategorySerializer(ModelSerializer):
-    title = CharField()
+class CategorySerializer(CategorySerializerMixin):
+    pass
 
+
+class CategorySerializerForDishes(CategorySerializerMixin):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ('title',)
 
 
 class TagSerializer(ModelSerializer):
@@ -26,67 +26,44 @@ class TagSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class _EventSerializer(ModelSerializer):
-    status = SerializerMethodField()
-    start = SerializerMethodField()
-
-    class Meta:
-        model = Event
-        fields = '__all__'
-
-    def get_start(self, obj):
-        return obj.start.strftime('%Y.%m.%d %H:%M')
-
-    def get_status(self, obj):
-        now = dt.datetime.now(utc)
-        start = obj.start.replace(tzinfo=utc)
-        if now < start:
-            return 'Ещё не началось'
-        elif start <= now < start + dt.timedelta(hours=3):
-            return 'Уже началось'
-        return 'Закончилось'
+class BarSerializer(BarSerializerMixin):
+    pass
 
 
-class BarSerializer(ModelSerializer):
-    title = CharField()
-
+class BarSerializerForDishes(BarSerializerMixin):
     class Meta:
         model = Bar
-        fields = (
-            'title',
-            'slug',
-            'description',
-            'address',
-            'opening_year',
-        )
+        fields = ('title', 'slug')
 
 
-class EventSerializer(ModelSerializer):
-    status = SerializerMethodField()
-    start = SerializerMethodField()
+class EventSerializerWithPlace(EventSerializerMixin):
     place = BarSerializer(required=True)
 
     class Meta:
         model = Event
         fields = '__all__'
 
-    def get_start(self, obj):
-        return obj.start.strftime('%Y.%m.%d %H:%M')
 
-    def get_status(self, obj):
-        now = dt.datetime.now(utc)
-        start = obj.start.replace(tzinfo=utc)
-        if now < start:
-            return 'Ещё не началось'
-        elif start <= now < start + dt.timedelta(hours=3):
-            return 'Уже началось'
-        return 'Закончилось'
+class EventSerializerWithoutPlace(EventSerializerMixin):
+    class Meta:
+        model = Event
+        exclude = ('place',)
 
 
 class DishSerializer(ModelSerializer):
-    category = CategorySerializer(required=True)
-    bar = BarSerializer(required=True)
+    category = CategorySerializerForDishes(required=True)
+    bar = BarSerializerForDishes(required=True)
 
     class Meta:
         model = Dish
-        fields = '__all__'
+        fields = (
+            'id',
+            'title',
+            'unique_dish_id',
+            'slug',
+            'price',
+            'tags',
+            'description',
+            'category',
+            'bar'
+        )
