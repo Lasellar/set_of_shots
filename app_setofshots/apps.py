@@ -4,4 +4,4 @@ from django.apps import AppConfig
 class AppSetofshotsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'app_setofshots'
-    verbose_name = 'СетОфШотс'
+    verbose_name = 'Сет рюмочных'

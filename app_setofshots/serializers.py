@@ -4,7 +4,7 @@ from rest_framework.serializers import (
 
 from .mixins import EventSerializerMixin, BarSerializerMixin, CategorySerializerMixin
 from .models import (
-    Bar, Event, Dish, Category, Tag
+    Bar, Event, Dish, Category, Tag, Post
 )
 
 
@@ -66,4 +66,17 @@ class DishSerializer(ModelSerializer):
             'description',
             'category',
             'bar'
+        )
+
+
+class PostSerializer(ModelSerializer):
+    class Meta:
+        model = Post
+        fields = (
+            'id',
+            'title',
+            'text',
+            'bar',
+            'pub_date',
+            'is_published'
         )

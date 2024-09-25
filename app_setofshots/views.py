@@ -4,11 +4,11 @@ from django.shortcuts import get_object_or_404
 from http import HTTPStatus
 
 from .models import (
-    Bar, Event, Dish
+    Bar, Event, Dish, Post
 )
 from .serializers import (
     BarSerializer, EventSerializerWithPlace,
-    DishSerializer, EventSerializerWithoutPlace
+    DishSerializer, EventSerializerWithoutPlace, PostSerializer
 )
 
 
@@ -53,4 +53,18 @@ def get_bar_events(request, bar_slug=None):
         bar = get_object_or_404(Bar, slug=bar_slug)
         events = events.filter(place=bar)
     serializer = EventSerializerWithPlace(events, many=True)
+    return Response(serializer.data, status=HTTPStatus.OK)
+
+
+@api_view(['GET'])
+def get_posts(request):
+    posts = Post.objects.filter(is_published=True)
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data, status=HTTPStatus.OK)
+
+
+@api_view(['GET'])
+def get_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    serializer = PostSerializer(post)
     return Response(serializer.data, status=HTTPStatus.OK)
