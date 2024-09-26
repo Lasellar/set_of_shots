@@ -13,13 +13,13 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
 
-    path('posts/', get_posts, name='posts'),
+    path('feeds/', get_posts, name='posts'),
     path('bars/', get_bars, name='get_bars'),
     path('events/', get_events, name='get_events'),
     path('dishes/', get_dishes, name='get_dishes'),
 
-    path('posts/<slug:post_slug>/', get_post, name='post'),
-    path('bars/<slug:bar_slug>/events/', get_bar_events),
+    path('feeds/<slug:post_slug>/', get_post, name='post'),
+    # path('bars/<slug:bar_slug>/events/', get_bar_events),
     path('bars/<slug:bar_slug>/', get_bar),
     path('admin/', admin.site.urls),
 
