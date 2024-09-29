@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}
+  {{ bar.title }}
+{% endblock %}
+{% block content %}
+  <div class="col d-flex justify-content-center">
+    <div class="card" style="width: 40rem;">
+      <div class="card-body">
+        {% if bar.image %}
+          <a href="{{ bar.image.url }}" target="_blank">
+            <img class="border-3 rounded img-fluid img-thumbnail mb-2 mx-auto d-block" src="{{ bar.image.url }}">
+          </a>
+        {% endif %}
+        <h5 class="card-title">{{ bar.title }}</h5>
+        <small>
+          <p>{{ bar.address }}</p>
+        </small>
+        <p class="card-text">{{ bar.description|linebreaksbr }}</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

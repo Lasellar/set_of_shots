@@ -1,17 +1,13 @@
-from django.contrib import messages
 from django.db.models import (
     Model,
-    CharField, IntegerField, DateTimeField,
-    ForeignKey, ManyToManyField, OneToOneField,
+    CharField, IntegerField,
+    ForeignKey, ManyToManyField,
     ImageField, SlugField, BooleanField,
     CASCADE, TextField, DateField,
 )
 from django.contrib.auth import get_user_model
-
-from datetime import datetime
-
 from django.urls import reverse
-from django.utils.text import slugify
+from django.utils.html import mark_safe, escape
 
 User = get_user_model()
 
@@ -44,12 +40,19 @@ class Category(Model):
 
 class Event(Model):
     title = CharField(max_length=128, verbose_name='Ивент')
-    description = CharField(max_length=1024, verbose_name='Описание')
+    description = TextField(
+        max_length=1024,
+        verbose_name='Описание',
+        help_text=f'Для вставки красивых ссылок(чтобы можно было кликать '
+                         'на слово)\nследует использовать шаблон:\n<a href="ССЫ'
+                         'ЛКА">КЛИКАБЕЛЬНЫЙ ТЕКСТ</a>. Для удобства:\n\n<a href="'
+                         '"></a>',
+    )
     slug = SlugField(
         max_length=128, unique=True, verbose_name='Ссылка',
         help_text='Можно оставить пустым', blank=True,
     )
-    start = DateTimeField(verbose_name='Дата и время')
+    start = DateField(verbose_name='Дата')
     place = ForeignKey(
         to='Bar', related_name='ivents', on_delete=CASCADE,
         verbose_name='Место'
@@ -57,10 +60,18 @@ class Event(Model):
     is_published = BooleanField(
         verbose_name='Опубликовано', blank=True, default=False
     )
+    image = ImageField(
+        upload_to='events_images',
+        verbose_name='Фото',
+        blank=True
+    )
 
     class Meta:
         verbose_name = 'ивенты'
         verbose_name_plural = 'Ивент'
+
+    def get_absolute_url(self):
+        return reverse('app_setofshots:event', kwargs={'event_slug': self.slug})
 
     def __str__(self):
         return f'{self.title}, {self.start}.'
@@ -88,6 +99,14 @@ class Dish(Model):
         'Bar', on_delete=CASCADE, null=False, related_name='dishes',
         default=None
     )
+    image = ImageField(
+        upload_to='dishes_images',
+        verbose_name='Фото',
+        blank=True
+    )
+    is_published = BooleanField(
+        verbose_name='Опубликовано', blank=True, default=False
+    )
 
     class Meta:
         verbose_name = 'позиция меню'
@@ -114,6 +133,14 @@ class Bar(Model):
     description = CharField(max_length=1024, verbose_name='Описание')
     address = CharField(max_length=128, verbose_name='Адрес')
     opening_year = IntegerField(verbose_name='Год открытия')
+    image = ImageField(
+        upload_to='bars_images',
+        verbose_name='Фото',
+        blank=True
+    )
+    is_published = BooleanField(
+        verbose_name='Опубликовано', blank=True, default=False
+    )
 
     class Meta:
         verbose_name = 'бар'
@@ -151,6 +178,11 @@ class Post(Model):
         verbose_name='Дата публикации',
         auto_created=True, null=True
     )
+    image = ImageField(
+        upload_to='posts_images',
+        verbose_name='Фото',
+        blank=True
+    )
 
     class Meta:
         ordering = ('-pub_date',)
@@ -158,7 +190,7 @@ class Post(Model):
         verbose_name_plural = 'Посты'
 
     def get_absolute_url(self):
-        return reverse('post', kwargs={'post_slug': self.slug})
+        return reverse('app_setofshots:feed', kwargs={'post_slug': self.slug})
 
     def __str__(self):
         return self.title[:64]

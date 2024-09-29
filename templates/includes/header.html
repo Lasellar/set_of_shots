@@ -1,0 +1,50 @@
+{% load static %}
+<header>
+  <nav class="navbar navbar-light">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'app_setofshots:feeds' %}">
+        <img src="{% static 'img/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+        Сет Рюмочных
+      </a>
+      {% with request.resolver_match.view_name as view_name %}
+        <ul class="nav  nav-pills">
+          <li class="nav-item">
+            <a class="nav-link
+            {% if view_name == 'app_setofshots:feeds' %} disabled {% else %} text-black {% endif %}"
+               href="{% url 'app_setofshots:feeds' %}">
+              Лента
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link
+            {% if view_name == 'app_setofshots:bars' %} disabled {% else %} text-black {% endif %}"
+               href="{% url 'app_setofshots:bars' %}">
+              Рюмочные
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link
+            {% if view_name == 'app_setofshots:menu' %} disabled {% else %} text-black {% endif %}"
+               href="{% url 'app_setofshots:menu' %}">
+              Меню
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link
+            {% if view_name == 'app_setofshots:events' %} disabled {% else %} text-black {% endif %}"
+               href="{% url 'app_setofshots:events' %}">
+              Ивенты
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link
+            {% if view_name == 'pages:about' %} disabled {% else %} text-black {% endif %}"
+               href="{% url 'pages:about' %}">
+              О проекте
+            </a>
+          </li>
+        </ul>
+      {% endwith %}
+    </div>
+  </nav>
+</header>

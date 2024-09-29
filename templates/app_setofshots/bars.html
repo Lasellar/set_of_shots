@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  Наши рюмочные
+{% endblock %}
+{% block content %}
+  {% for bar in page_obj %}
+    <article class="mb-5">
+      {% include "includes/bar_card.html" %}
+    </article>
+  {% endfor %}
+  {% include "includes/paginator.html" %}
+{% endblock %}

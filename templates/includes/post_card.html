@@ -1,0 +1,24 @@
+<div class="col d-flex justify-content-center">
+  <div class="card" style="width: 40rem;">
+    <div class="card-body">
+      {% if post.image %}
+        <a href="{% url 'app_setofshots:feed' post.slug %}">
+          <img
+            class="border-3 rounded img-fluid img-thumbnail mb-2 mx-auto d-block"
+            src="{{ post.image.url }}"
+          >
+        </a>
+      {% endif %}
+      <h5 class="card-title">{{ post.title }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">
+        <small>
+          {% if not post.is_published %}
+            <p class="text-danger">Снят с публикации</p>
+          {% endif %}
+        </small>
+      </h6>
+      <p class="card-text">{{ post.text|truncatewords:20|safe }}</p>
+      <a href="{% url 'app_setofshots:feed' post.slug %}" class="card-link">Читать полный текст</a>
+    </div>
+  </div>
+</div>

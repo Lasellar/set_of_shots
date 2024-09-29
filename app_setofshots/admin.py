@@ -1,8 +1,11 @@
 from django import forms
 from django.contrib import admin, messages
 from django.db.models import TextField
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 from .models import Bar, Tag, Category, Dish, Event, Post, TagDish
+from .forms import EventForm
 
 admin.site.empty_value_display = '---'
 
@@ -47,8 +50,14 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title',)
-    prepopulated_fields = {'slug': ('title',)}
+    form = EventForm
+    list_display = ('title', 'is_published')
+    list_editable = ('is_published',)
+    prepopulated_fields = {
+        'slug': ('title',)
+    }
+    fields = ('title', 'description',
+              'slug', 'start', 'place', 'is_published', 'image')
 
 
 @admin.register(Post)
@@ -63,10 +72,9 @@ class PostAdmin(admin.ModelAdmin):
     search_help_text = 'Поиск по названию/тексту/дате'
     list_filter = ('is_published', 'bar__title',)
     prepopulated_fields = {'slug': ('title',)}
-    fields = ('title', 'text', 'bar', 'slug', 'pub_date', 'is_published',)
-    formfield_overrides = {
-        TextField: {'widget': forms.TextInput(attrs={'rows': 5, 'cols': 80})}
-    }
+    fields = (
+        'title', 'text', 'bar', 'slug', 'pub_date', 'is_published', 'image'
+    )
 
     @admin.display(description='Название', ordering='title')
     def short_title(self, obj: Post):

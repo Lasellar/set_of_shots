@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  Лента записей
+{% endblock %}
+{% block content %}
+  {% for post in page_obj %}
+    {% if post.start %}
+      <article class="mb-5">
+        {% include "includes/event_card.html" %}
+      </article>
+    {% elif post.pub_date %}
+      <article class="mb-5">
+        {% include "includes/post_card.html" %}
+      </article>
+    {% endif %}
+  {% endfor %}
+  {% include "includes/paginator.html" %}
+{% endblock %}
