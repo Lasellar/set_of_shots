@@ -59,7 +59,6 @@ class DishSerializer(ModelSerializer):
         fields = (
             'id',
             'title',
-            'unique_dish_id',
             'slug',
             'price',
             'tags',
@@ -77,6 +76,6 @@ class PostSerializer(ModelSerializer):
             'title',
             'text',
             'bar',
-            'pub_date',
+            'pub_datetime',
             'is_published'
         )

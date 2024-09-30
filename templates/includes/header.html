@@ -12,14 +12,7 @@
             <a class="nav-link
             {% if view_name == 'app_setofshots:feeds' %} disabled {% else %} text-black {% endif %}"
                href="{% url 'app_setofshots:feeds' %}">
-              Лента
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link
-            {% if view_name == 'app_setofshots:bars' %} disabled {% else %} text-black {% endif %}"
-               href="{% url 'app_setofshots:bars' %}">
-              Рюмочные
+              Новости
             </a>
           </li>
           <li class="nav-item">
@@ -27,6 +20,13 @@
             {% if view_name == 'app_setofshots:menu' %} disabled {% else %} text-black {% endif %}"
                href="{% url 'app_setofshots:menu' %}">
               Меню
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link
+            {% if view_name == 'app_setofshots:bars' %} disabled {% else %} text-black {% endif %}"
+               href="{% url 'app_setofshots:bars' %}">
+              Рюмочные
             </a>
           </li>
           <li class="nav-item">
@@ -40,7 +40,7 @@
             <a class="nav-link
             {% if view_name == 'pages:about' %} disabled {% else %} text-black {% endif %}"
                href="{% url 'pages:about' %}">
-              О проекте
+              Контакты
             </a>
           </li>
         </ul>

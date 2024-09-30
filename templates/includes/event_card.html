@@ -1,24 +1,45 @@
 <div class="col d-flex justify-content-center">
   <div class="card" style="width: 40rem;">
-    <div class="card-body">
+    <div class="row g-0">
       {% if post.image %}
-        <a href="{% url 'app_setofshots:event' post.slug %}">
-          <img
-            class="border-3 rounded img-fluid img-thumbnail mb-2 mx-auto d-block"
-            src="{{ post.image.url }}"
-          >
-        </a>
+        <div class="col-md-4">
+          <a href="{% url 'app_setofshots:event' event_slug=post.slug %}">
+            <img
+              class="border-3 rounded img-fluid img-thumbnail"
+              src="{{ post.image.url }}"
+              alt="{{ post.title }}"
+            >
+          </a>
+        </div>
       {% endif %}
-      <h5 class="card-title">{{ post.title }}</h5>
-      <h6 class="card-subtitle mb-2 text-muted">
-        <small>
-          {% if not post.is_published %}
-            <p class="text-danger">Снят с публикации</p>
-          {% endif %}
-        </small>
-      </h6>
-      <p class="card-text">{{ post.description|truncatewords:20|safe }}</p>
-      <a href="{% url 'app_setofshots:event' post.slug %}" class="card-link">Читать полный текст</a>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{ post.title }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">
+            <small>
+              {% if not post.is_published %}
+                <p class="text-danger">Снят с публикации</p>
+              {% endif %}
+            </small>
+          </h6>
+          <p class="card-text">{{ post.description|truncatewords:40|safe }}</p>
+          <a href="{% url 'app_setofshots:event' event_slug=post.slug %}" class="card-link">Читать полный текст</a>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div>
+          <button type="button" class="btn btn-outline-dark">{{ post.start }}</button>
+          <button type="button" class="btn btn-outline-dark">{{ post.place }}</button>
+          <button
+            type="button"
+            class="{% if post.get_status == 'Ещё не началось' %}btn btn-outline-dark
+                   {% elif post.get_status == 'Уже началось' %}btn btn-outline-success
+                   {% else %}btn btn-outline-danger{% endif %}">
+            {{ post.get_status }}
+          </button>
+          </div>
+      </div>
     </div>
   </div>
 </div>

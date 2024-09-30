@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}
   {{ post.title }} |
-  {{ post.pub_date|date:"d E Y" }}
+  {{ post.pub_datetime|date:"d E Y" }}
 {% endblock %}
 {% block content %}
   <div class="col d-flex justify-content-center">
@@ -18,7 +18,7 @@
             {% if not post.is_published %}
               <p class="text-danger">Снят с публикации</p>
             {% endif %}
-            {{ post.pub_date|date:"d E Y" }}<br>
+            {{ post.pub_datetime|date:"d E Y" }}<br>
           </small>
         </h6>
         <p class="card-text">{{ post.text|safe }}</p>

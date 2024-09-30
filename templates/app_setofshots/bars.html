@@ -4,10 +4,15 @@
   Наши рюмочные
 {% endblock %}
 {% block content %}
-  {% for bar in page_obj %}
-    <article class="mb-5">
-      {% include "includes/bar_card.html" %}
-    </article>
-  {% endfor %}
+  <div id="dishes-container" class="row">
+    {% for bar in page_obj %}
+      <article class="col-md-4">
+        {% include "includes/bar_card.html" %}
+      </article>
+      {% if forloop.counter|divisibleby:3 and not forloop.last %}
+        </div><div class="row">
+      {% endif %}
+    {% endfor %}
+  </div>
   {% include "includes/paginator.html" %}
 {% endblock %}

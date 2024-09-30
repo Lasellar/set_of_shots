@@ -12,11 +12,11 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='post',
-            options={'ordering': ('-pub_date',), 'verbose_name': 'пост', 'verbose_name_plural': 'Посты'},
+            options={'ordering': ('-pub_datetime',), 'verbose_name': 'пост', 'verbose_name_plural': 'Посты'},
         ),
         migrations.AddField(
             model_name='post',
-            name='pub_date',
+            name='pub_datetime',
             field=models.DateField(auto_created=True, null=True, verbose_name='Дата публикации'),
         ),
         migrations.AlterField(

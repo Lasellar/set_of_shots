@@ -1,10 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  Меню
+{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col-3">
+      <h2>Бары</h2>
+      <ul class="nav nav-pills flex-column">
+        {% for bar in bars %}
+          <li class="nav-item">
+            <button type="button" class="btn btn-light">
+              <a href="{% url 'app_setofshots:menu' bar_slug=bar.slug %}"
+                 class="nav-link link-dark">{{ bar.title }}
+              </a>
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-9">
+      <h1>Меню</h1>
+      <form id="filter-form" method="get" aria-label="Vertical button group">
+        <div class="btn-group-horizontal" role="group" aria-label="Horizontal button group">
+          {% for category in categories %}
+            <button
+              type="submit"
+              class="{% if category.slug in categories_ %}btn btn-secondary {% else %} btn btn-light {% endif %}"
+              id="{{ category.title }}" name="category" value="{{ category.slug }}">{{ category.title }}
+            </button>
+          {% endfor %}
+        </div>
+        <!-- <button type="submit">Применить фильтры</button> -->
+      </form>
 
-</body>
-</html>
+      <div id="dishes-container" class="row">
+        {% for dish in page_obj %}
+          <div class="col-md-4">
+            {% include "includes/dish_card.html" %}
+          </div>
+          {% if forloop.counter|divisibleby:3 and not forloop.last %}
+            </div><div class="row">
+          {% endif %}
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+  {% include "includes/paginator.html" %}
+{% endblock %}
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    // Обработчик события для чекбоксов категорий
+    $('.category-checkbox').on('change', function() {
+      const formData = $('#filter-form').serialize(); // собираем данные формы
+
+      $.ajax({
+        url: "{% url 'app_setofshots:menu' bar_slug=request.GET.bar_slug %}", // укажите правильный URL
+        data: formData,
+        success: function(data) {
+          $('#dishes-container').html(data); // обновляем контейнер с блюдами
+        }
+      });
+    });
+  });
+</script>

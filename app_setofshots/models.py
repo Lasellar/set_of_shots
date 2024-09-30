@@ -1,12 +1,15 @@
+from datetime import timedelta
+
 from django.db.models import (
     Model,
     CharField, IntegerField,
     ForeignKey, ManyToManyField,
     ImageField, SlugField, BooleanField,
-    CASCADE, TextField, DateField,
+    CASCADE, TextField, DateField, DateTimeField,
 )
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.html import mark_safe, escape
 
 User = get_user_model()
@@ -14,6 +17,9 @@ User = get_user_model()
 
 class Tag(Model):
     title = CharField(max_length=16, verbose_name='Название')
+    is_published = BooleanField(
+        verbose_name='Опубликовано', blank=True, default=False
+    )
 
     class Meta:
         verbose_name = 'теги'
@@ -28,6 +34,9 @@ class Category(Model):
     slug = SlugField(
         max_length=32, unique=True, verbose_name='Ссылка(уникальная)',
         help_text='Можно оставить пустым', blank=True,
+    )
+    is_published = BooleanField(
+        verbose_name='Опубликовано', blank=True, default=False
     )
 
     class Meta:
@@ -44,15 +53,15 @@ class Event(Model):
         max_length=1024,
         verbose_name='Описание',
         help_text=f'Для вставки красивых ссылок(чтобы можно было кликать '
-                         'на слово)\nследует использовать шаблон:\n<a href="ССЫ'
-                         'ЛКА">КЛИКАБЕЛЬНЫЙ ТЕКСТ</a>. Для удобства:\n\n<a href="'
-                         '"></a>',
+                  'на слово)\nследует использовать шаблон:\n<a href="ССЫ'
+                  'ЛКА">КЛИКАБЕЛЬНЫЙ ТЕКСТ</a>. Для удобства:\n\n<a href="'
+                  '"></a>',
     )
     slug = SlugField(
         max_length=128, unique=True, verbose_name='Ссылка',
         help_text='Можно оставить пустым', blank=True,
     )
-    start = DateField(verbose_name='Дата')
+    start = DateTimeField(verbose_name='Дата и время')
     place = ForeignKey(
         to='Bar', related_name='ivents', on_delete=CASCADE,
         verbose_name='Место'
@@ -70,6 +79,14 @@ class Event(Model):
         verbose_name = 'ивенты'
         verbose_name_plural = 'Ивент'
 
+    def get_status(self):
+        now = timezone.now()
+        if self.start > now:
+            return 'Ещё не началось'
+        elif now <= self.start < now + timedelta(hours=3):
+            return 'Уже началось'
+        return 'Закончилось'
+
     def get_absolute_url(self):
         return reverse('app_setofshots:event', kwargs={'event_slug': self.slug})
 
@@ -78,15 +95,12 @@ class Event(Model):
 
 
 class Dish(Model):
-    unique_dish_id = CharField(
-        unique=True,
-        verbose_name='Уникальный идентификатор [Рюмочная_Позиция]',
-        max_length=64
-    )
-    title = CharField(max_length=32, verbose_name='Позиция меню')
+    title = CharField(max_length=32, verbose_name='Название')
     slug = SlugField(
         max_length=32, unique=True, verbose_name='Ссылка',
-        help_text='Можно оставить пустым', blank=True,
+        help_text='Заполняется автоматически(если такая ссылка уже существует, '
+                  'стоит добавить постфикс "_<рюмочная>", например: "..._zin"',
+        blank=True,
     )
     category = ForeignKey(
         Category, on_delete=CASCADE,
@@ -95,6 +109,10 @@ class Dish(Model):
     description = CharField(max_length=1024, verbose_name='Описание')
     tags = ManyToManyField(Tag, through='TagDish', verbose_name='Теги')
     price = IntegerField(verbose_name='Цена')
+    promille = IntegerField(
+        verbose_name='Крепость', help_text='Если не алкоголь- оставить пустым',
+        blank=True, null=True
+    )
     bar = ForeignKey(
         'Bar', on_delete=CASCADE, null=False, related_name='dishes',
         default=None
@@ -174,7 +192,7 @@ class Post(Model):
     is_published = BooleanField(
         verbose_name='Опубл.', blank=True, default=False
     )
-    pub_date = DateField(
+    pub_datetime = DateTimeField(
         verbose_name='Дата публикации',
         auto_created=True, null=True
     )
@@ -185,7 +203,7 @@ class Post(Model):
     )
 
     class Meta:
-        ordering = ('-pub_date',)
+        ordering = ('-pub_datetime',)
         verbose_name = 'пост'
         verbose_name_plural = 'Посты'
 

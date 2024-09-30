@@ -13,7 +13,7 @@ admin.site.empty_value_display = '---'
 class DishInline(admin.TabularInline):
     model = Dish
     extra = 0
-    exclude = ('unique_dish_id', )
+    fields = ('title',)
     ordering = ('title',)
 
 
@@ -66,14 +66,14 @@ class PostAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     list_display_links = ('short_title',)
     list_per_page = 10
-    ordering = ('-pub_date', '-id',)
+    ordering = ('-pub_datetime', '-id',)
     actions = ('set_published', 'unset_published')
-    search_fields = ('title', 'text', 'pub_date',)
+    search_fields = ('title', 'text', 'pub_datetime',)
     search_help_text = 'Поиск по названию/тексту/дате'
     list_filter = ('is_published', 'bar__title',)
     prepopulated_fields = {'slug': ('title',)}
     fields = (
-        'title', 'text', 'bar', 'slug', 'pub_date', 'is_published', 'image'
+        'title', 'text', 'bar', 'slug', 'pub_datetime', 'is_published', 'image'
     )
 
     @admin.display(description='Название', ordering='title')

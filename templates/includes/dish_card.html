@@ -1,0 +1,34 @@
+<div class="col d-flex justify-content-center">
+  <div class="card" style="width: 40rem;">
+    <div class="card-body">
+      {% if dish.image %}
+        <img
+          class="border-3 rounded img-fluid img-thumbnail mb-2 mx-auto d-block"
+          src="{{ dish.image.url }}"
+        >
+      {% endif %}
+      <h5 class="card-title">{{ dish.title }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">
+        <small>
+          {% if not dish.is_published %}
+            <p class="text-danger">Снято с публикации</p>
+          {% endif %}
+        </small>
+      </h6>
+      {% for tag in dish.tags.all %}
+        <button type="button" class="btn btn-light">{{ tag.title }}</button>
+      {% endfor %}
+      <p class="card-text">{{ dish.description|truncatewords:20|safe }}</p>
+      <div class="row">
+        <div class="col-10">
+          <h5>{{ dish.price }}₽</h5>
+        </div>
+        {% if dish.promille %}
+          <div class="col-2 justify-content-right">
+            <h5>{{ dish.promille }}‰</h5>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

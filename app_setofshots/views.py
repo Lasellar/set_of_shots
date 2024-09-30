@@ -1,3 +1,4 @@
+from datetime import timedelta
 from itertools import chain
 
 from django.core.paginator import Paginator
@@ -6,7 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from setofshots import settings
 
 from .models import (
-    Bar, Event, Dish, Post
+    Bar, Event, Dish, Post, Category
 )
 
 
@@ -19,18 +20,30 @@ def paginator(object_list, page):
     return _paginator.get_page(page)
 
 
+"""def get_status(start):
+    now = timezone.now()
+    print(f'Сейчас {now}')
+    if start > now:
+        return 'Ещё не началось'
+    elif now <= start < now + timedelta(hours=3):
+        return 'Уже началось'
+    return 'Закончилось'"""
+
+
 def feeds(request):
     """View-функция, которая рендерит страницу с новостями."""
     template = 'app_setofshots/feeds.html'
     _posts = Post.objects.filter(
         is_published=True,
-        pub_date__lte=timezone.now()
-    ).order_by('-pub_date')
+        pub_datetime__lte=timezone.now()
+    ).order_by('-pub_datetime')
     _events = Event.objects.filter(
         is_published=True).order_by('-start')
     objects = list(chain(_events, _posts))
     page_object = paginator(objects, request.GET.get('page'))
-    context = {'page_obj': page_object}
+    context = {
+        'page_obj': page_object
+    }
     return render(request, template, context)
 
 
@@ -85,11 +98,37 @@ def events(request):
 def event(request, event_slug):
     template = 'app_setofshots/detail_event.html'
     _event = get_object_or_404(Event, slug=event_slug, is_published=True)
-    context = {'event': _event}
+    context = {
+        'event': _event,
+    }
     return render(request, template, context)
 
 
-def menu(request):
+def menu(request, bar_slug=None):
     template = 'app_setofshots/menu.html'
-    context = {}
+    _bars = Bar.objects.filter(is_published=True)
+    _categories = Category.objects.filter(is_published=True)
+
+    # Фильтруем блюда по выбранному бару и категориям
+    _dishes = Dish.objects.filter(
+        is_published=True
+    )
+
+    if bar_slug:
+        _dishes = _dishes.filter(bar__slug=bar_slug)
+
+    __categories = request.GET.getlist('category')
+    for _category in __categories:
+        _dishes = _dishes.filter(category__slug=_category)
+
+    page_object = paginator(_dishes, request.GET.get('page'))
+
+    context = {
+        'bars': _bars,
+        'categories': _categories,
+        'page_obj': page_object,
+        'categories_': __categories
+    }
     return render(request, template, context)
+
+
