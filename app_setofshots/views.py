@@ -1,4 +1,4 @@
-from datetime import timedelta
+import datetime
 from itertools import chain
 
 from django.core.paginator import Paginator
@@ -20,18 +20,12 @@ def paginator(object_list, page):
     return _paginator.get_page(page)
 
 
-"""def get_status(start):
-    now = timezone.now()
-    print(f'Сейчас {now}')
-    if start > now:
-        return 'Ещё не началось'
-    elif now <= start < now + timedelta(hours=3):
-        return 'Уже началось'
-    return 'Закончилось'"""
-
-
 def feeds(request):
-    """View-функция, которая рендерит страницу с новостями."""
+    """
+    View-функция, которая рендерит страницу с новостями.
+    Получает посты и ивенты, соединяет их в один список
+    и создает объект страницы.
+    """
     template = 'app_setofshots/feeds.html'
     _posts = Post.objects.filter(
         is_published=True,
@@ -96,6 +90,7 @@ def events(request):
 
 
 def event(request, event_slug):
+    """View-функция, которая редерит отдельную страницу ивента."""
     template = 'app_setofshots/detail_event.html'
     _event = get_object_or_404(Event, slug=event_slug, is_published=True)
     context = {
@@ -105,6 +100,16 @@ def event(request, event_slug):
 
 
 def menu(request, bar_slug=None):
+    """
+    View-функция, которая рендерит страницу с меню.
+    При первом открытии страницы(на эндпоинте /menu/
+    и без параметров запроса) не выводит никакие позиции.
+    Можно выбрать конкретный интересующий бар, ссылки
+    на которые находятся в кнопках с названиями.
+    Названия как и категории берутся из базы данных и
+    создаются в админке. Кнопки категорий при нажатии
+    не дополняют эндпоинт, а добавляют параметры в запрос.
+    """
     template = 'app_setofshots/menu.html'
     _bars = Bar.objects.filter(is_published=True)
     _categories = Category.objects.filter(is_published=True)
@@ -116,6 +121,8 @@ def menu(request, bar_slug=None):
 
     if bar_slug:
         _dishes = _dishes.filter(bar__slug=bar_slug)
+    else:
+        _dishes = []
 
     __categories = request.GET.getlist('category')
     for _category in __categories:
@@ -132,3 +139,7 @@ def menu(request, bar_slug=None):
     return render(request, template, context)
 
 
+def logs(request):
+    template = 'logs.html'
+    content = ...
+    context = {'content': content}

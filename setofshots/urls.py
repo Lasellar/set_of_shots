@@ -4,9 +4,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
 
-from app_setofshots.views import (feeds, feed
-)
-
 router = routers.DefaultRouter()
 
 urlpatterns = [

@@ -53,9 +53,9 @@ class Event(Model):
         max_length=1024,
         verbose_name='Описание',
         help_text=f'Для вставки красивых ссылок(чтобы можно было кликать '
-                  'на слово)\nследует использовать шаблон:\n<a href="ССЫ'
-                  'ЛКА">КЛИКАБЕЛЬНЫЙ ТЕКСТ</a>. Для удобства:\n\n<a href="'
-                  '"></a>',
+                  'на слово)<br>следует использовать шаблон:<br>&lt;a hre'
+                  'f="ССЫЛКА"&gt;КЛИКАБЕЛЬНЫЙ ТЕКСТ&lt;/a&gt;. Шаблон для'
+                  ' удобства:<br><br>&lt;a href=""&gt;&lt;/a&gt;',
     )
     slug = SlugField(
         max_length=128, unique=True, verbose_name='Ссылка',
@@ -80,6 +80,10 @@ class Event(Model):
         verbose_name_plural = 'Ивент'
 
     def get_status(self):
+        """
+        Берёт поле start объекта модели Event и сравнивает
+        его с текущим временем.
+        """
         now = timezone.now()
         if self.start > now:
             return 'Ещё не началось'
@@ -88,6 +92,7 @@ class Event(Model):
         return 'Закончилось'
 
     def get_absolute_url(self):
+        """Добавление ссылки 'смотреть на сайте' в админку"""
         return reverse('app_setofshots:event', kwargs={'event_slug': self.slug})
 
     def __str__(self):
@@ -99,14 +104,14 @@ class Dish(Model):
     slug = SlugField(
         max_length=32, unique=True, verbose_name='Ссылка',
         help_text='Заполняется автоматически(если такая ссылка уже существует, '
-                  'стоит добавить постфикс "_<рюмочная>", например: "..._zin"',
+                  'стоит добавить постфикс "_<рюмочная>", например: "..._zin")',
         blank=True,
     )
     category = ForeignKey(
         Category, on_delete=CASCADE,
         null=False, related_name='dishes', verbose_name='Категория'
     )
-    description = CharField(max_length=1024, verbose_name='Описание')
+    description = TextField(max_length=1024, verbose_name='Описание')
     tags = ManyToManyField(Tag, through='TagDish', verbose_name='Теги')
     price = IntegerField(verbose_name='Цена')
     promille = IntegerField(
@@ -115,7 +120,7 @@ class Dish(Model):
     )
     bar = ForeignKey(
         'Bar', on_delete=CASCADE, null=False, related_name='dishes',
-        default=None
+        default=None, verbose_name='Рюмочная'
     )
     image = ImageField(
         upload_to='dishes_images',
@@ -148,8 +153,11 @@ class Bar(Model):
         max_length=32, unique=True, verbose_name='Ссылка',
         help_text='Можно оставить пустым', blank=True,
     )
-    description = CharField(max_length=1024, verbose_name='Описание')
+    description = TextField(max_length=1024, verbose_name='Описание')
     address = CharField(max_length=128, verbose_name='Адрес')
+    work_time = TextField(
+        max_length=1024, verbose_name='Часы работы', null=True
+    )
     opening_year = IntegerField(verbose_name='Год открытия')
     image = ImageField(
         upload_to='bars_images',
@@ -182,7 +190,13 @@ class Post(Model):
         max_length=64, unique=True, verbose_name='Ссылка',
         help_text='Можно оставить пустым', blank=True,
     )
-    text = TextField(max_length=2048, verbose_name='Текст')
+    text = TextField(
+        max_length=2048, verbose_name='Текст',
+        help_text=f'Для вставки красивых ссылок(чтобы можно было кликать '
+                  'на слово)<br>следует использовать шаблон:<br>&lt;a hre'
+                  'f="ССЫЛКА"&gt;КЛИКАБЕЛЬНЫЙ ТЕКСТ&lt;/a&gt;. Шаблон для'
+                  ' удобства:<br><br>&lt;a href=""&gt;&lt;/a&gt;',
+    )
     bar = ForeignKey(
         'Bar', on_delete=CASCADE,
         null=True, blank=True,

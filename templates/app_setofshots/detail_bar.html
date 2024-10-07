@@ -12,9 +12,10 @@
           </a>
         {% endif %}
         <h5 class="card-title">{{ bar.title }}</h5>
-        <small>
-          <p>{{ bar.address }}</p>
-        </small>
+        <div class="row">
+          <small>{{ bar.address }}</small>
+          <small><p>{{ bar.work_time }}</p></small>
+        </div>
         <p class="card-text">{{ bar.description|linebreaksbr }}</p>
       </div>
     </div>

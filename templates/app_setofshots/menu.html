@@ -10,7 +10,9 @@
       <ul class="nav nav-pills flex-column">
         {% for bar in bars %}
           <li class="nav-item">
-            <button type="button" class="btn btn-light">
+            <button
+              type="button"
+              class="{% if bar.slug in request.path %}btn btn-secondary {% else %} btn btn-light {% endif %}">
               <a href="{% url 'app_setofshots:menu' bar_slug=bar.slug %}"
                  class="nav-link link-dark">{{ bar.title }}
               </a>
@@ -31,7 +33,6 @@
             </button>
           {% endfor %}
         </div>
-        <!-- <button type="submit">Применить фильтры</button> -->
       </form>
 
       <div id="dishes-container" class="row">

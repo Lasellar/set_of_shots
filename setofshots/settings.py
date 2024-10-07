@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-^(3v4hs@0jfd=xkt!7^u4b^g^tw%+sm+s4*_3m2$mo5p#j!nj+'
 
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ['127.0.0.1']
@@ -123,3 +123,4 @@ CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000/',
 ]"""
+
