@@ -1,10 +1,11 @@
-from django import forms
 from django.contrib import admin, messages
-from django.db.models import TextField
-from django.utils.html import escape
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
+from django.utils.log import log_response
 
-from .models import Bar, Tag, Category, Dish, Event, Post, TagDish
+from .models import (
+    Bar, Tag, Category, Dish, Event, Post, TagDish,
+    BarUnderground, Underground, AttachmentImage
+)
 from .forms import EventForm
 
 admin.site.empty_value_display = '---'
@@ -13,15 +14,32 @@ admin.site.empty_value_display = '---'
 class DishInline(admin.TabularInline):
     model = Dish
     extra = 0
-    fields = ('title',)
+    fields = ('title', 'price')
     ordering = ('title',)
+
+
+class UndergroundInline(admin.StackedInline):
+    model = BarUnderground
+    extra = 1
+
+
+class AttachmentImageInline(admin.StackedInline):
+    model = AttachmentImage
+    extra = 1
+    fields = ('image', 'is_published')
+
+
+@admin.register(AttachmentImage)
+class AttachmentImageAdmin(admin.ModelAdmin):
+    list_display = ('image', 'is_published')
+    list_editable = ('is_published',)
 
 
 @admin.register(Bar)
 class BarAdmin(admin.ModelAdmin):
     list_display = ('title', 'is_published')
     list_editable = ('is_published',)
-    inlines = (DishInline,)
+    inlines = (UndergroundInline, AttachmentImageInline, DishInline)
     prepopulated_fields = {'slug': ('title',)}
     actions = ('set_published', 'unset_published')
 
@@ -78,6 +96,20 @@ class DishAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
     list_display = ('title', 'is_published')
     list_editable = ('is_published',)
+
+
+@admin.register(Underground)
+class UndergroundAdmin(admin.ModelAdmin):
+    list_display = ('display_image', 'title', 'is_published')
+    list_editable = ('is_published',)
+
+    def display_image(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="width:10px; height: auto;">',
+                obj.image.url
+            )
+        return ' '
 
 
 @admin.register(Category)

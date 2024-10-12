@@ -6,6 +6,7 @@ from django.db.models import (
     ForeignKey, ManyToManyField,
     ImageField, SlugField, BooleanField,
     CASCADE, TextField, DateField, DateTimeField,
+Field
 )
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -16,14 +17,20 @@ User = get_user_model()
 
 
 class Tag(Model):
-    title = CharField(max_length=16, verbose_name='Название')
+    title = CharField(max_length=128, verbose_name='Название')
     is_published = BooleanField(
-        verbose_name='Опубликовано', blank=True, default=False
+        verbose_name='Опубл.', blank=True, default=False
+    )
+    background_color = CharField(
+        max_length=7,
+        verbose_name='Цвет фона',
+        help_text='цвет фона должен быть в формате #000000(может быть пустым)',
+        null=True, blank=True
     )
 
     class Meta:
-        verbose_name = 'теги'
-        verbose_name_plural = 'Тег'
+        verbose_name = 'тег'
+        verbose_name_plural = 'Теги'
 
     def __str__(self):
         return self.title
@@ -76,8 +83,8 @@ class Event(Model):
     )
 
     class Meta:
-        verbose_name = 'ивенты'
-        verbose_name_plural = 'Ивент'
+        verbose_name = 'ивент'
+        verbose_name_plural = 'Ивенты'
 
     def get_status(self):
         """
@@ -87,7 +94,7 @@ class Event(Model):
         now = timezone.now()
         if self.start > now:
             return 'Ещё не началось'
-        elif now <= self.start < now + timedelta(hours=3):
+        elif now <= self.start and now < self.start + timedelta(hours=3):
             return 'Уже началось'
         return 'Закончилось'
 
@@ -147,6 +154,22 @@ class BarDish(Model):
         return f'{self.bar} ==> {self.dish}'
 
 
+class Underground(Model):
+    title = CharField(max_length=40, verbose_name='Станция')
+    image = ImageField(
+        upload_to='ug_images', verbose_name='Значок', blank=True)
+    is_published = BooleanField(
+        verbose_name='Опубл.', blank=True, default=False
+    )
+
+    class Meta:
+        verbose_name = 'метро'
+        verbose_name_plural = 'Метро'
+
+    def __str__(self):
+        return self.title
+
+
 class Bar(Model):
     title = CharField(max_length=32, verbose_name='Бар')
     slug = SlugField(
@@ -155,15 +178,34 @@ class Bar(Model):
     )
     description = TextField(max_length=1024, verbose_name='Описание')
     address = CharField(max_length=128, verbose_name='Адрес')
-    work_time = TextField(
-        max_length=1024, verbose_name='Часы работы', null=True
+
+    work_time_monday = CharField(max_length=11, verbose_name='Часы работы(пн)', null=True)
+    work_time_tuesday = CharField(max_length=11, verbose_name='Часы работы(вт)', null=True)
+    work_time_wednesday = CharField(max_length=11, verbose_name='Часы работы(ср)', null=True)
+    work_time_thursday = CharField(max_length=11, verbose_name='Часы работы(чт)', null=True)
+    work_time_friday = CharField(max_length=11, verbose_name='Часы работы(пт)', null=True)
+    work_time_saturday = CharField(max_length=11, verbose_name='Часы работы(сб)', null=True)
+    work_time_sunday = CharField(max_length=11, verbose_name='Часы работы(вс)', null=True)
+
+    telegram_link = CharField(
+        max_length=100, verbose_name='Ссылка на тг-канал',
+        help_text='можно оставить пустым', null=True, blank=True
     )
-    opening_year = IntegerField(verbose_name='Год открытия')
+    instagram_link = CharField(
+        max_length=100, verbose_name='Ссылка на инстаграм',
+        help_text='можно оставить пустым', null=True, blank=True
+    )
+    yandex_maps_link = CharField(
+        max_length=2048, verbose_name='Ссылка на карты',
+        help_text='Лучше оставить пустым', null=True, blank=True
+    )
     image = ImageField(
         upload_to='bars_images',
-        verbose_name='Фото',
+        verbose_name='Главное Фото',
         blank=True
     )
+    underground = ManyToManyField(
+        Underground, through='BarUnderground', verbose_name='Метро')
     is_published = BooleanField(
         verbose_name='Опубликовано', blank=True, default=False
     )
@@ -174,6 +216,33 @@ class Bar(Model):
 
     def __str__(self):
         return self.title
+
+
+class AttachmentImage(Model):
+    image = ImageField(
+        upload_to='attachment_images',
+        verbose_name='Фото для карусели',
+        blank=True, null=True
+    )
+    bar = ForeignKey(
+        to='Bar', related_name='attachment_image', on_delete=CASCADE,
+        verbose_name='Рюмочная'
+    )
+    is_published = BooleanField(
+        verbose_name='Опубликовано', blank=True, default=False
+    )
+
+    class Meta:
+        verbose_name = 'фото для карусели'
+        verbose_name_plural = 'Фото для карусели'
+
+    def __str__(self):
+        return self.image.name
+
+
+class BarUnderground(Model):
+    bar = ForeignKey(Bar, on_delete=CASCADE)
+    underground = ForeignKey(Underground, on_delete=CASCADE)
 
 
 class TagDish(Model):
@@ -198,7 +267,7 @@ class Post(Model):
                   ' удобства:<br><br>&lt;a href=""&gt;&lt;/a&gt;',
     )
     bar = ForeignKey(
-        'Bar', on_delete=CASCADE,
+        Bar, on_delete=CASCADE,
         null=True, blank=True,
         related_name='posts', verbose_name='Место',
         help_text='Можно оставить пустым',
@@ -208,7 +277,10 @@ class Post(Model):
     )
     pub_datetime = DateTimeField(
         verbose_name='Дата публикации',
-        auto_created=True, null=True
+        auto_created=True, null=True,
+        help_text='Если поставить дату и время в будущем- публикация'
+                  'Будет отложена и опубликуется автоматически в ука'
+                  'занное время'
     )
     image = ImageField(
         upload_to='posts_images',

@@ -1,11 +1,9 @@
-from django.db.models import Model
-from django.utils.text import slugify
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import (
     ModelSerializer, CharField
 )
 
-from app_setofshots.models import Event, Bar, Category, Post
+from app_setofshots.models import Event, Bar, Category
 
 import datetime as dt
 from pytz import utc

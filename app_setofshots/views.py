@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from setofshots import settings
 
 from .models import (
-    Bar, Event, Dish, Post, Category
+    Bar, Event, Dish, Post, Category, AttachmentImage
 )
 
 
@@ -38,6 +38,7 @@ def feeds(request):
     context = {
         'page_obj': page_object
     }
+    AttachmentImage.objects.all().delete()
     return render(request, template, context)
 
 
