@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
 
+
 router = routers.DefaultRouter()
 
 urlpatterns = [
@@ -11,6 +12,7 @@ urlpatterns = [
     path('pages/', include('pages.urls', namespace='pages')),
     path('admin/', admin.site.urls),
 ]
+
 admin.site.site_header = 'Админ-панель'
 admin.site.index_title = ''
 admin.site.site_title = 'Админка Сет рюмочных'

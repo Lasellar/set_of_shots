@@ -65,7 +65,9 @@ def bar(request, bar_slug):
     _bar = get_object_or_404(Bar, slug=bar_slug, is_published=True)
     bar_dishes = Dish.objects.filter(bar=_bar, is_published=True
                                      ).prefetch_related('tags')
-    context = {'bar': _bar, 'bar_dishes': bar_dishes}
+    carousel = AttachmentImage.objects.filter(bar=_bar, is_published=True)
+    print(carousel)
+    context = {'bar': _bar, 'bar_dishes': bar_dishes, 'carousel': carousel}
     return render(request, template, context)
 
 

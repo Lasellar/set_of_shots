@@ -217,6 +217,9 @@ class Bar(Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('app_setofshots:bar', kwargs={'bar_slug': self.slug})
+
 
 class AttachmentImage(Model):
     image = ImageField(
@@ -225,7 +228,7 @@ class AttachmentImage(Model):
         blank=True, null=True
     )
     bar = ForeignKey(
-        to='Bar', related_name='attachment_image', on_delete=CASCADE,
+        to=Bar, related_name='attachment_image', on_delete=CASCADE,
         verbose_name='Рюмочная'
     )
     is_published = BooleanField(
