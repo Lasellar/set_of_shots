@@ -13,5 +13,4 @@ urlpatterns = [
     path('feeds/<slug:post_slug>/', feed, name='feed'),
     path('bars/<slug:bar_slug>/', bar, name='bar'),
     path('menu/<slug:bar_slug>/', menu, name='menu'),
-
 ]
