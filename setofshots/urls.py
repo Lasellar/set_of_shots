@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework import routers
 
 
@@ -11,6 +12,8 @@ urlpatterns = [
     path('', include('app_setofshots.urls', namespace='app_setofshots')),
     path('pages/', include('pages.urls', namespace='pages')),
     path('admin/', admin.site.urls),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
 ]
 
 admin.site.site_header = 'Админ-панель'

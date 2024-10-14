@@ -5,13 +5,11 @@ from django.db.models import (
     CharField, IntegerField,
     ForeignKey, ManyToManyField,
     ImageField, SlugField, BooleanField,
-    CASCADE, TextField, DateField, DateTimeField,
-Field
+    CASCADE, TextField, DateTimeField,
 )
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.html import mark_safe, escape
 
 User = get_user_model()
 
@@ -69,6 +67,10 @@ class Event(Model):
         help_text='Можно оставить пустым', blank=True,
     )
     start = DateTimeField(verbose_name='Дата и время')
+    duration = IntegerField(
+        verbose_name='Длительность в часах',
+        null=True, blank=True, help_text='По умолчанию 3 часа'
+    )
     place = ForeignKey(
         to='Bar', related_name='ivents', on_delete=CASCADE,
         verbose_name='Место'
@@ -85,18 +87,6 @@ class Event(Model):
     class Meta:
         verbose_name = 'ивент'
         verbose_name_plural = 'Ивенты'
-
-    def get_status(self):
-        """
-        Берёт поле start объекта модели Event и сравнивает
-        его с текущим временем.
-        """
-        now = timezone.now()
-        if self.start > now:
-            return 'Ещё не началось'
-        elif now <= self.start and now < self.start + timedelta(hours=3):
-            return 'Уже началось'
-        return 'Закончилось'
 
     def get_absolute_url(self):
         """Добавление ссылки 'смотреть на сайте' в админку"""
@@ -225,10 +215,10 @@ class AttachmentImage(Model):
     image = ImageField(
         upload_to='attachment_images',
         verbose_name='Фото для карусели',
-        blank=True, null=True
+        blank=True,
     )
     bar = ForeignKey(
-        to=Bar, related_name='attachment_image', on_delete=CASCADE,
+        to=Bar, related_name='attachment_images', on_delete=CASCADE,
         verbose_name='Рюмочная'
     )
     is_published = BooleanField(
