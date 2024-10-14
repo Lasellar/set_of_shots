@@ -4,19 +4,68 @@
 {% endblock %}
 {% block content %}
   <div class="col d-flex justify-content-center">
-    <div class="card" style="width: 40rem;">
-      <div class="card-body">
-        {% if bar.image %}
-          <a href="{{ bar.image.url }}" target="_blank">
-            <img class="border-3 rounded img-fluid img-thumbnail mb-2 mx-auto d-block" src="{{ bar.image.url }}">
-          </a>
-        {% endif %}
-        <h5 class="card-title">{{ bar.title }}</h5>
-        <div class="row">
-          <small>{{ bar.address }}</small>
-          <small><p>{{ bar.work_time }}</p></small>
+    <div style="">
+      <div class="card-body row">
+        <div class="col-md-7"
+          {% if bar.image %}
+            <a href="{{ bar.image.url }}" target="_blank">
+              <img class="border-3 rounded img-fluid img-thumbnail mb-2 mx-auto d-block" src="{{ bar.image.url }}">
+            </a>
+          {% endif %}
         </div>
-        <p class="card-text">{{ bar.description|linebreaksbr }}</p>
+        <div class="col-md-3">
+          <h5 class="card-title">{{ bar.title }}</h5>
+          <div>
+            <small>{{ bar.address }}</small>
+            <div>
+              {% for ug in bar.underground.all %}
+                <small>
+                  <img src="{{ ug.image.url }}">
+                  {{ ug.title }}
+                </small>
+              {% endfor %}
+            </div>
+            <div class="row">
+              <p>Часы работы:</p>
+              <div class="row">
+                <div class="col d-flex justify-content-left"><small>Понедельник:</small></div>
+                <div class="col d-flex justify-content-right"><small>{{ bar.work_time_monday }}</small></div>
+              </div>
+              <div class="row">
+                <div class="col d-flex justify-content-left"><small>Вторник:</small></div>
+                <div class="col d-flex justify-content-right"><small>{{ bar.work_time_tuesday }}</small></div>
+              </div>
+              <div class="row">
+                <div class="col d-flex justify-content-left"><small>Среда:</small></div>
+                <div class="col d-flex justify-content-right"><small>{{ bar.work_time_wednesday }}</small></div>
+              </div>
+              <div class="row">
+                <div class="col d-flex justify-content-left"><small>Четверг:</small></div>
+                <div class="col d-flex justify-content-right"><small>{{ bar.work_time_thursday }}</small></div>
+              </div>
+              <div class="row">
+                <div class="col d-flex justify-content-left"><small>Пятница:</small></div>
+                <div class="col d-flex justify-content-right"><small>{{ bar.work_time_friday }}</small></div>
+              </div>
+              <div class="row">
+                <div class="col d-flex justify-content-left"><small>Суббота:</small></div>
+                <div class="col d-flex justify-content-right"><small>{{ bar.work_time_saturday }}</small></div>
+              </div>
+              <div class="row">
+                <div class="col d-flex justify-content-left"><small>Воскресенье:</small></div>
+                <div class="col d-flex justify-content-right"><small>{{ bar.work_time_sunday }}</small></div>
+              </div>
+            </div>
+            <small><p>{{ bar.work_time }}</p></small>
+          </div>
+        </div>
+      <div class="col-md-1">
+        <div><a href="{{ bar.telegram_link }}">Тг</a></div>
+        <div><a href="{{ bar.instagram_link }}">Инста</a></div>
+      </div>
+      <p class="card-text">{{ bar.description|linebreaksbr }}</p>
+      {% if bar.yandex_maps_link %}{{ bar.yandex_maps_link|safe }}{% endif %}
+      <div style="width:768px;height:800px;overflow:hidden;position:relative;"><iframe style="width:100%;height:100%;border:1px solid #e6e6e6;border-radius:8px;box-sizing:border-box" src="https://yandex.ru/maps-reviews-widget/27339938644?comments"></iframe><a href="https://yandex.ru/maps/org/zinziver/27339938644/" target="_blank" style="box-sizing:border-box;text-decoration:none;color:#b3b3b3;font-size:10px;font-family:YS Text,sans-serif;padding:0 20px;position:absolute;bottom:8px;width:100%;text-align:center;left:0;overflow:hidden;text-overflow:ellipsis;display:block;max-height:14px;white-space:nowrap;padding:0 16px;box-sizing:border-box">Зинзивер на карте Москвы — Яндекс Карты</a></div>
       </div>
     </div>
   </div>
