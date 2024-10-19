@@ -4,7 +4,8 @@ from django.utils.log import log_response
 
 from .models import (
     Bar, Tag, Category, Dish, Event, Post, TagDish,
-    BarUnderground, Underground, AttachmentImage
+    BarUnderground, Underground, AttachmentImage,
+    Logs
 )
 from .forms import EventForm
 
@@ -213,3 +214,8 @@ class PostAdmin(admin.ModelAdmin):
         self.message_user(
             request, f'{count} записей снято с публикации', messages.WARNING
         )
+
+
+@admin.register(Logs)
+class PostAdmin(admin.ModelAdmin):
+    pass

@@ -215,7 +215,6 @@ class AttachmentImage(Model):
     image = ImageField(
         upload_to='attachment_images',
         verbose_name='Фото для карусели',
-        blank=True,
     )
     bar = ForeignKey(
         to=Bar, related_name='attachment_images', on_delete=CASCADE,
@@ -291,3 +290,14 @@ class Post(Model):
 
     def __str__(self):
         return self.title[:64]
+
+
+class Logs(Model):
+    year = CharField(max_length=4)
+    month = CharField(max_length=2)
+    day = CharField(max_length=2, null=True, blank=True)
+
+    def get_absolute_url(self):
+        return reverse('app_setofshots:logs', kwargs={
+            'year': self.year, 'month': self.month, 'day': self.day
+        })
