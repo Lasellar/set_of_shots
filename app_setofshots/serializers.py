@@ -1,6 +1,6 @@
 import datetime
 
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, ValidationError
 
 import setofshots.settings
 from .mixins import BarSerializerMixin, CategorySerializerMixin

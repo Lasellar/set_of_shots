@@ -66,12 +66,13 @@ class TagDishInline(admin.TabularInline):
 
 @admin.register(Dish)
 class DishAdmin(admin.ModelAdmin):
-    list_display = ('title', 'bar__title', 'is_published', 'short_description', 'price')
-    list_editable = ('price', 'is_published',)
+    list_display = ('is_drink', 'title', 'bar__title', 'is_published', 'short_description', 'price')
+    list_editable = ('is_drink', 'price', 'is_published',)
+    list_display_links = ('title',)
     prepopulated_fields = {'slug': ('title',)}
     inlines = (TagDishInline,)
     actions = ('set_published', 'unset_published')
-    list_filter = ('is_published', 'bar__title',)
+    list_filter = ('is_drink', 'is_published', 'bar__title',)
 
     @admin.display(description='Опубликовать')
     def set_published(self, request, queryset):

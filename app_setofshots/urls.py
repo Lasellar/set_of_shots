@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import events, bars, feeds, feed, menu, event, bar, logs
+from .views import events, bars, feeds, feed, event, bar, logs
 
 app_name = 'app_setofshots'
 
@@ -13,5 +13,4 @@ urlpatterns = [
     path('events/<slug:event_slug>/', event, name='event'),
     path('feeds/<slug:post_slug>/', feed, name='feed'),
     path('bars/<slug:bar_slug>/', bar, name='bar'),
-    path('menu/<slug:bar_slug>/', menu, name='menu'),
 ]

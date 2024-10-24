@@ -97,6 +97,10 @@ class Event(Model):
 
 
 class Dish(Model):
+    is_drink = BooleanField(
+        default=False, verbose_name='Это напиток',
+        help_text='Если напиток- поставить галочку'
+    )
     title = CharField(max_length=32, verbose_name='Название')
     slug = SlugField(
         max_length=32, unique=True, verbose_name='Ссылка',
@@ -113,7 +117,7 @@ class Dish(Model):
     price = IntegerField(verbose_name='Цена')
     promille = IntegerField(
         verbose_name='Крепость', help_text='Если не алкоголь- оставить пустым',
-        blank=True, null=True
+        blank=True, null=True,
     )
     bar = ForeignKey(
         'Bar', on_delete=CASCADE, null=False, related_name='dishes',
