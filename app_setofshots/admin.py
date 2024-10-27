@@ -1,13 +1,13 @@
 from django.contrib import admin, messages
 from django.utils.html import format_html
-from django.utils.log import log_response
 
 from .models import (
     Bar, Tag, Category, Dish, Event, Post, TagDish,
     BarUnderground, Underground, AttachmentImage,
-    Logs
+    Logs, User
 )
 from .forms import EventForm
+from .permissions import admin_permissions_for_dish, admin_permissions_for_bar
 
 admin.site.empty_value_display = '---'
 
@@ -37,6 +37,7 @@ class AttachmentImageAdmin(admin.ModelAdmin):
 
 
 @admin.register(Bar)
+@admin_permissions_for_bar
 class BarAdmin(admin.ModelAdmin):
     list_display = ('title', 'is_published')
     list_editable = ('is_published',)
@@ -65,6 +66,7 @@ class TagDishInline(admin.TabularInline):
 
 
 @admin.register(Dish)
+@admin_permissions_for_dish
 class DishAdmin(admin.ModelAdmin):
     list_display = ('is_drink', 'title', 'bar__title', 'is_published', 'short_description', 'price')
     list_editable = ('is_drink', 'price', 'is_published',)

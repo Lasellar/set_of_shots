@@ -16,7 +16,6 @@ from .logger.logger import log_decorator
 
 
 @api_view(['GET'])
-@log_decorator
 def bars(request):
     _bars = Bar.objects.filter(is_published=True)
     serializer = BarSerializer(_bars, many=True)
@@ -24,7 +23,6 @@ def bars(request):
 
 
 @api_view(['GET'])
-@log_decorator
 def bar(request, bar_slug):
     _bar = get_object_or_404(Bar, slug=bar_slug, is_published=True)
     bar_serializer = BarSerializer(_bar)
@@ -41,7 +39,6 @@ def bar(request, bar_slug):
 
 
 @api_view(['GET'])
-@log_decorator
 def events(request):
     _events = Event.objects.filter(is_published=True)
     serializer = EventSerializer(_events, many=True)
@@ -49,7 +46,6 @@ def events(request):
 
 
 @api_view(['GET'])
-@log_decorator
 def event(request, event_slug):
     _event = get_object_or_404(Event, slug=event_slug, is_published=True)
     serializer = EventSerializer(_event)
@@ -57,7 +53,6 @@ def event(request, event_slug):
 
 
 @api_view(['GET'])
-@log_decorator
 def feeds(request):
     posts = Post.objects.filter(is_published=True)
     serializer = PostSerializer(posts, many=True)
@@ -65,7 +60,6 @@ def feeds(request):
 
 
 @api_view(['GET'])
-@log_decorator
 def feed(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug, is_published=True)
     serializer = PostSerializer(post)

@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.db.models import (
     Model,
     CharField, IntegerField,
@@ -9,7 +7,6 @@ from django.db.models import (
 )
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.utils import timezone
 
 User = get_user_model()
 
@@ -138,6 +135,13 @@ class Dish(Model):
 
     def __str__(self):
         return self.title
+
+    """def save(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        if request and request.user.first_name == str(self.bar):
+            super().save(*args, **kwargs)
+        else:
+            raise ValueError(f"Вы не имеете доступа к объектам {self.bar}.")"""
 
 
 class BarDish(Model):
